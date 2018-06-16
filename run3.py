@@ -8,13 +8,13 @@ def getPopAttributes(iteration):
     #Determine population attributes based on iteration number
 
     # Initial population size
-    popSize = 10000000
+    popSize = 10000
     # percentage of initial pop. infected
-    perInfect = .01
+    perInfect = .5
     # % chance that offspring of an infected male is male
-    ratio = .6
+    ratio = .5
     # Growth of population per generation. 0 means no growth, 1 means double every year, etc.
-    growth = .05
+    growth = 6
 
     return (popSize, perInfect, ratio, growth)
 

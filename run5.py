@@ -2,77 +2,85 @@ import time
 import matplotlib
 import matplotlib.pyplot as plt
 from sim import population
+import os
 
 
-#This script simulates multiple run4 attempts, varying 2 attributes instead of 1. I'm gonna try to do them all at once, then build a matrix
+# This script simulates multiple run4 attempts, varying 2 attributes instead of 1. I'm gonna try to do them all at once, then build a matrix
 # of plots
 
-# Returns the value of the meta-attribute
-def miterForm(miter):
-    return
+# resultsdir = os.path.join(os.getcwd(),"Results")
+# resultsdir = os.path.join(resultsdir,"run5")
+# os.chdir(resultsdir)
 
-#Returns the value of one of the attributes
-def iterationForm(iteration):
-    return .001*iteration
+#Initial Settings:
+popNum = 1000
+maxIter = 10000
 
-def getPopAttributes(iteration, miter):
-    #Determine population attributes based on iteration number
+#
 
-    # Initial population size 10000
-    popSize = 10000
+# Bounds of graphs' x axis: Popsize, init, ratio, growth
+xupper = [100000,1,1,5]
+xlower = [100,0,.5,-.2]
 
-    # percentage of initial pop. infected
-    perInfect = .01
+#Values for graphs
+vary = (
+(100,1000,10000,50000,100000), # Population Size
+(0,.05,.1,.5,1), # Initial Infection Rate
+(.5,.625,.75,.875,1), # Ratio
+(-.2,-.1,0,2,5) # Growth
+)
 
-    # % chance that offspring of an infected male is male .6
-    ratio = .6
-    # Growth of population per generation. 0 means no growth, 1 means double every year, etc.
-    growth = iterationForm(iteration)
+# Default values
+varydef = (10000, .5, .75, 0)
+baseXList = range(0,popNum) # Base list for x values
+labelList = ("Population Size","Initial Infection Rate","Ratio","Growth Rate")
+primaryVary = 3
+secondaryVary = 2
 
-    return (popSize, perInfect, ratio, growth)
+if not secondaryVary == primaryVary:
+    ylists = []
+    xlist = [x/1000*(xupper[primaryVary]-xlower[primaryVary])+xlower[primaryVary] for x in baseXList]
+    for mitNum in range(0,5):
+        iteration = [*varydef]
+        iteration[secondaryVary] = vary[secondaryVary][mitNum]
+        ylist = []
+        for itNum in xlist:
+            iteration[primaryVary] = itNum
+            ylist.append(population(*iteration).decay(maxIter))
+        ylists.append(ylist)
+            # Change point
 
-start = time.process_time()
+        # Change line
+    plt.plot(xlist, ylists[0], label=vary[secondaryVary][0], mfc='r', marker=',')
+    plt.plot(xlist, ylists[1], label=vary[secondaryVary][1], mfc='b', marker=',')
+    plt.plot(xlist, ylists[2], label=vary[secondaryVary][2], mfc='g', marker=',')
+    plt.plot(xlist, ylists[3], label=vary[secondaryVary][3], mfc='y', marker=',')
+    plt.plot(xlist, ylists[4], label=vary[secondaryVary][4], mfc='c', marker=',')
+    plt.xlabel(labelList[primaryVary])
+    plt.ylabel('Iterations Before Extinction')
+    plt.title('Iterations vs ' + labelList[primaryVary] + ' with varying ' + labelList[secondaryVary])
+    plt.legend()
+    print(xlist[popNum-1])
+    plt.axis([xlist[0], xlist[popNum-1], 0, 100])
 
-# Amount of graphs to make
-graphNum = 5
-# Amount of populations to simulate
-popNum = 10000
-# Max iteration count per population
-maxIter = 1000
+    plt.show()
+    # Plot here
+    # Save here
+    # Plot and save
 
-#list
-xlist = []
-totalList = []
-firstRun = True
+for primaryVary in range(0,3):
+    for secondaryVary in range(0,3):
+        #This is were the stuff above will go eventually
+        pass
+        # Change Graph
 
-for x in range(1, graphNum):
-    ylist = []
-    for y in range(1, popNum):
-        pop = population(*getPopAttributes(y,x))
-        if (firstRun):
-            xlist.append(iterationForm(y))
-        ylist.append(pop.decay(maxIter))
 
-    totalList.append(xlist)
-    totalList.append(ylist)
-    firstRun = False
 
-stop = time.process_time()
-print("Time Elapsed:", stop - start)
 
-plt.plot(**totalList)
+# 1000 points
+growth = (0,10) # Standard is: 0 Graphs at: -5, -2, 0, 2, 5
+initInf = (0,1) # Standard is: .5 Graphs at 0, .25, .5, .75, 1
+popSize = (100,100000) # Standard is: 10,000 Graphs at: 100, 1000, 10000, 50000, 100000
+ratio = (.5,1) # Standard is: .75 Graphs at: .5, .625, .75, .875, 1
 
-xmin = iterationForm(0)
-xmax = iterationForm(popNum)
-ymin = 0
-ymax = 75
-
-plt.axis([xmin, xmax, ymin, ymax])
-plt.xlabel('Population Growth Rate')
-plt.ylabel('Iterations Before Extinction')
-plt.title('Iterations vs Growth Rate')
-s = "Growth Rate = 0, Pop Size = 10000, Initial = 1%, Ratio = .6"
-s = "Pop Size = 10000, Initial = 1%, Ratio = .6"
-plt.text(2, ymax/2, s)
-
-plt.show()
+# Markers: color letter + ',' -- comma means pixel
