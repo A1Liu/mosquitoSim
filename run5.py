@@ -8,13 +8,13 @@ import os
 # This script simulates multiple run4 attempts, varying 2 attributes instead of 1. I'm gonna try to do them all at once, then build a matrix
 # of plots
 
-# resultsdir = os.path.join(os.getcwd(),"Results")
-# resultsdir = os.path.join(resultsdir,"run5")
-# os.chdir(resultsdir)
+resultsdir = os.path.join(os.getcwd(),"Results")
+resultsdir = os.path.join(resultsdir,"run5")
+os.chdir(resultsdir)
 
 #Initial Settings:
-popNum = 1000
-maxIter = 10000
+popNum = 1000 # As this number increases, so does the detail of each line. Usually not necessary to increase it beyond around 1000
+maxIter = 10000 # As a general rule, this number should be over 1000 at all times. If it goes too high, runtime will suffer.
 
 #
 
@@ -36,8 +36,8 @@ baseXList = range(0,popNum) # Base list for x values
 labelList = ("Population Size","Initial Infection Rate","Ratio","Growth Rate")
 primaryVary = 3
 secondaryVary = 2
-
-if not secondaryVary == primaryVary:
+# if True:
+def getFig(primaryVary, secondaryVary):
     ylists = []
     xlist = [x/1000*(xupper[primaryVary]-xlower[primaryVary])+xlower[primaryVary] for x in baseXList]
     for mitNum in range(0,5):
@@ -51,6 +51,7 @@ if not secondaryVary == primaryVary:
             # Change point
 
         # Change line
+    plt.clf()
     plt.plot(xlist, ylists[0], label=vary[secondaryVary][0], mfc='r', marker=',')
     plt.plot(xlist, ylists[1], label=vary[secondaryVary][1], mfc='b', marker=',')
     plt.plot(xlist, ylists[2], label=vary[secondaryVary][2], mfc='g', marker=',')
@@ -59,28 +60,28 @@ if not secondaryVary == primaryVary:
     plt.xlabel(labelList[primaryVary])
     plt.ylabel('Iterations Before Extinction')
     plt.title('Iterations vs ' + labelList[primaryVary] + ' with varying ' + labelList[secondaryVary])
+
+    plt.axis([xlist[0], xlist[popNum-1],
+    0, 20])# Change these values to make graph prettier
+
     plt.legend()
-    print(xlist[popNum-1])
-    plt.axis([xlist[0], xlist[popNum-1], 0, 100])
+    return plt
 
-    plt.show()
-    # Plot here
-    # Save here
-    # Plot and save
-
-for primaryVary in range(0,3):
-    for secondaryVary in range(0,3):
-        #This is were the stuff above will go eventually
-        pass
-        # Change Graph
+shortLabelList = ("popSize","init","ratio","growth")
+# for primaryVary in range(0,4):
+#     for secondaryVary in range(0,4):
+#         #This is were the stuff above will go eventually
+#         if not primaryVary == secondaryVary:
+#             figure = getFig(primaryVary, secondaryVary)
+#             title = 'Iter vs ' + shortLabelList[primaryVary] + ' change ' + shortLabelList[secondaryVary]
+#             figure.savefig(os.path.join(resultsdir,title)+ ".png", format='png', dpi=1200)
+#         # Change Graph
 
 
+primaryVary = 2
+secondaryVary = 3
+figure = getFig(primaryVary, secondaryVary)
 
-
-# 1000 points
-growth = (0,10) # Standard is: 0 Graphs at: -5, -2, 0, 2, 5
-initInf = (0,1) # Standard is: .5 Graphs at 0, .25, .5, .75, 1
-popSize = (100,100000) # Standard is: 10,000 Graphs at: 100, 1000, 10000, 50000, 100000
-ratio = (.5,1) # Standard is: .75 Graphs at: .5, .625, .75, .875, 1
-
-# Markers: color letter + ',' -- comma means pixel
+# figure.show()
+title = 'Iter vs ' + shortLabelList[primaryVary] + ' change ' + shortLabelList[secondaryVary]
+figure.savefig(os.path.join(resultsdir,title)+ "2.png", format='png', dpi=1200)
